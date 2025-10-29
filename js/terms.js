@@ -3,19 +3,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const termBtn = document.getElementById('term-btn');
   const result = document.getElementById('term-result');
 
-  fetch('./data/terms.json')
-    .then(res => res.json())
-    .then(dictionary => {
-      termBtn.addEventListener('click', () => {
-        const term = termInput.value.trim();
-        if (dictionary[term]) {
-          result.innerHTML = `<strong>${term}:</strong> ${dictionary[term]}`;
-        } else {
-          result.innerHTML = `Термин "${term}" не найден в словаре.`;
-        }
+  termBtn.addEventListener('click', () => {
+    const term = termInput.value.trim();
+    if (!term) return;
+
+    result.innerHTML = 'Загрузка...';
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${term}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Термин не найден');
+        return res.json();
+      })
+      .then(data => {
+        const meaning = data[0].meanings[0].definitions[0].definition;
+        result.innerHTML = `<strong>${term}:</strong> ${meaning}`;
+      })
+      .catch(() => {
+        result.innerHTML = `Термин "${term}" не найден.`;
       });
-    })
-    .catch(() => {
-      result.innerHTML = 'Ошибка загрузки словаря.';
-    });
+  });
 });
