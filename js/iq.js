@@ -3,10 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const result = document.getElementById('iq-result');
 
   button.addEventListener('click', () => {
-    const iq = Math.floor(Math.random() * 80) + 80; // 80–160
-    result.innerHTML = `
-      <h2>Ваш IQ: ${iq}</h2>
-      <p>${iq > 120 ? 'Вы гений!' : 'Продолжайте развиваться!'}</p>
-    `;
+    fetch('./data/iq.json')
+      .then(res => res.json())
+      .then(data => {
+        const iq = Math.floor(Math.random() * (data.iqMax - data.iqMin + 1)) + data.iqMin;
+        result.innerHTML = `<h2>Ваш IQ: ${iq}</h2>
+                            <p>${iq > 120 ? 'Вы гений!' : 'Продолжайте развиваться!'}</p>`;
+      })
+      .catch(() => {
+        result.innerHTML = 'Ошибка при расчете IQ.';
+      });
   });
 });
