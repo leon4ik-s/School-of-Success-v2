@@ -3,11 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const result = document.getElementById('iq-result');
 
   button.addEventListener('click', () => {
-    fetch('./data/iq.json')
+    fetch('https://randomuser.me/api/')
       .then(res => res.json())
       .then(data => {
-        const iq = Math.floor(Math.random() * (data.iqMax - data.iqMin + 1)) + data.iqMin;
-        result.innerHTML = `<h2>Ваш IQ: ${iq}</h2>
+        // Используем случайное число для IQ от 80 до 160
+        const iq = Math.floor(Math.random() * 80) + 80;
+        const userName = data.results[0].name.first;
+        result.innerHTML = `<h2>${userName}, ваш IQ: ${iq}</h2>
                             <p>${iq > 120 ? 'Вы гений!' : 'Продолжайте развиваться!'}</p>`;
       })
       .catch(() => {
